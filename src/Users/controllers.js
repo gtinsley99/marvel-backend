@@ -39,6 +39,49 @@ const registerUser = async (req, res) => {
     }
   };
 
+  const loginUser = async (req, res) => {
+    try {
+      const user = await User.findOne({where: {username: req.body.username}});
+      const token = jwt.sign({username: req.body.username}, process.env.JWTPASSWORD, {expiresIn: "7d"});
+      console.log(token);
+      res.status(201).json({
+        message: "User logged in",
+        user: {
+          username: user.username,
+          email: user.email,
+          token: token
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(501).json({
+        message: error.message,
+        detail: error
+      });
+    }
+  };
+
+  const loginWithToken = async (req, res) => {
+    try {
+      const userDetails = await User.findOne({where: {username: req.user.username}});
+      res.status(201).json({
+        message: "User logged in",
+        user: {
+          username: userDetails.username,
+          email: userDetails.email,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(501).json({
+        message: error.message,
+        detail: error
+      });
+    }
+  };
+
 module.exports = {
     registerUser,
+    loginUser,
+    loginWithToken,
 }

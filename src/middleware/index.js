@@ -41,6 +41,15 @@ const passwordCheck = async (req, res, next) => {
     if (!match) {
       throw new Error("Username or password incorrect");
     };
+    if (req.body.newpassword){
+      const samePass = await bcrypt.compare(
+        req.body.newpassword,
+        userDetails.password
+      );
+      if (samePass){
+        throw new Error("Same as current password");
+      };
+    };
     next();
   } catch (error) {
     console.log(error);

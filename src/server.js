@@ -8,6 +8,11 @@ const cors = require ("cors");
 // rename express to app
 const app = express();
 
+// Models
+const User = require("./Users/model");
+
+// Routes
+const userRouter = require("./Users/routes");
 
 // specify port the server will listen on
 const port = process.env.PORT || 5001; //if the server can't load on 5002 it will load on 5001.
@@ -15,6 +20,12 @@ const port = process.env.PORT || 5001; //if the server can't load on 5002 it wil
 //app.use() is for middleware
 app.use(express.json());
 app.use(cors());
+
+const syncTables = () => {
+    User.sync();
+};
+
+app.use("/users", userRouter);
 
 //health check for your API and see if server is working
 app.get("/health", (req, res) => {
@@ -27,5 +38,5 @@ app.get("/health", (req, res) => {
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
    //run the function to sync and create the tables
-    // syncTables();
+    syncTables();
 });

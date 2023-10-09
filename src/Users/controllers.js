@@ -125,10 +125,39 @@ const registerUser = async (req, res) => {
     }
   };
 
+  const updateUsername = async (req, res) => {
+    try {
+      const userDetails = await User.findOne({
+        where: { username: req.user.username },
+      });
+      await userDetails.update({
+        username: req.body.newusername,
+      });
+      await userDetails.save();
+      res.status(200).json({
+        message: "Username updated",
+        username: userDetails.username,
+      });
+    } catch (error) {
+      console.log(error);
+      if (error.errors[0].message === "username must be unique"){
+        res.status(409).json({
+          message: "Username taken"
+        });
+        return;
+      }
+      res.status(501).json({
+        message: error.message,
+        detail: error
+      });
+    }
+  };
+
 module.exports = {
     registerUser,
     loginUser,
     loginWithToken,
     updateEmail,
     updatePassword,
+    updateUsername,
 }

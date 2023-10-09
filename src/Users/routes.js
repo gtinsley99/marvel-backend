@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const userRouter = Router();
-const {registerUser, loginUser, loginWithToken, updateEmail, updatePassword, deleteUser} = require("./controllers");
+const {registerUser, loginUser, loginWithToken, updateEmail, updatePassword, deleteUser, updateUsername} = require("./controllers");
 const {hashPassword, passwordCheck, tokenCheck} = require("../middleware/index");
 
 // ADD /users to app.use router in server.js
@@ -19,6 +19,9 @@ userRouter.put("/updateemail", tokenCheck, updateEmail);
 
 // Route to update password with password check
 userRouter.put("/updatepassword", passwordCheck, hashPassword, updatePassword);
+
+// Route to update username with token check
+userRouter.put("/updateusername", tokenCheck, updateUsername);
 
 // Request to delete user with password check
 userRouter.delete("/deleteuser", passwordCheck, deleteUser);

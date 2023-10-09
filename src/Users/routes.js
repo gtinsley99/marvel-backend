@@ -3,8 +3,6 @@ const userRouter = Router();
 const {registerUser, loginUser, loginWithToken, updateEmail, updatePassword, deleteUser, updateUsername} = require("./controllers");
 const {hashPassword, passwordCheck, tokenCheck} = require("../middleware/index");
 
-// ADD /users to app.use router in server.js
-
 // Route to add a user, password hashed before add to db
 userRouter.post("/register", hashPassword, registerUser);
 

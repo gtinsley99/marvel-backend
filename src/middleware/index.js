@@ -39,7 +39,7 @@ const passwordCheck = async (req, res, next) => {
     };
     // If not a match gives error, doesn't reach next
     if (!match) {
-      throw new Error("Password and username do not match");
+      throw new Error("Username or password incorrect");
     };
     next();
   } catch (error) {

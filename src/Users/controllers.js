@@ -153,6 +153,27 @@ const registerUser = async (req, res) => {
     }
   };
 
+  const deleteUser = async (req, res) => {
+    try {
+      const user = await User.findOne({ where: { username: req.body.username } });
+      if (!user) {
+        throw new Error("Username or password incorrect");
+      } else {
+        await user.destroy();
+        res.status(200).json({
+          message: "User deleted",
+          username: req.body.username,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(501).json({
+        message: "Error occurred",
+        error: error,
+      });
+    }
+  };
+
 module.exports = {
     registerUser,
     loginUser,
@@ -160,4 +181,5 @@ module.exports = {
     updateEmail,
     updatePassword,
     updateUsername,
+    deleteUser
 }

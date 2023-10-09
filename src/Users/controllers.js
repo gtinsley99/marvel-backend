@@ -80,8 +80,32 @@ const registerUser = async (req, res) => {
     }
   };
 
+  const updateEmail = async (req, res) => {
+    try {
+      const userDetails = await User.findOne({
+        where: { username: req.user.username },
+      });
+      await userDetails.update({
+        email: req.body.newemail,
+      });
+      await userDetails.save();
+      res.status(200).json({
+        message: "User email updated",
+        username: req.body.username,
+        email: req.body.newemail,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(501).json({
+        message: error.message,
+        detail: error
+      });
+    }
+  };
+
 module.exports = {
     registerUser,
     loginUser,
     loginWithToken,
+    updateEmail,
 }

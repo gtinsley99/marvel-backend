@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const userRouter = Router();
-const {registerUser, loginUser, loginWithToken} = require("./controllers");
+const {registerUser, loginUser, loginWithToken, updateEmail} = require("./controllers");
 const {hashPassword, passwordCheck, tokenCheck} = require("../middleware/index");
 
 // ADD /users to app.use router in server.js
@@ -13,4 +13,7 @@ userRouter.post("/login", passwordCheck, loginUser);
 
 // Route to login with token
 userRouter.get("/loginwithtoken", tokenCheck, loginWithToken);
+
+// Route to update email with token check
+userRouter.put("/updateemail", tokenCheck, updateEmail);
 

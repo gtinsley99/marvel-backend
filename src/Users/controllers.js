@@ -103,9 +103,32 @@ const registerUser = async (req, res) => {
     }
   };
 
+  const updatePassword = async (req, res) => {
+    try {
+      const userDetails = await User.findOne({
+        where: { username: req.body.username },
+      });
+      await userDetails.update({
+        password: req.body.password,
+      });
+      await userDetails.save();
+      res.status(200).json({
+        message: "User password updated",
+        username: req.body.username
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(501).json({
+        message: error.message,
+        detail: error
+      });
+    }
+  };
+
 module.exports = {
     registerUser,
     loginUser,
     loginWithToken,
     updateEmail,
+    updatePassword,
 }

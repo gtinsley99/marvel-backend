@@ -17,3 +17,6 @@ userRouter.get("/loginwithtoken", tokenCheck, loginWithToken);
 // Route to update email with token check
 userRouter.put("/updateemail", tokenCheck, updateEmail);
 
+// Route to update password with password check
+userRouter.put("/updatepassword", passwordCheck, hashPassword, updatePassword);
+

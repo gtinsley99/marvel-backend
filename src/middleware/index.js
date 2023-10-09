@@ -62,8 +62,8 @@ const passwordCheck = async (req, res, next) => {
 
 const tokenCheck = async (req, res, next) => {
   try {
-    const username = jwt.verify(req.header("Authorization").replace("Bearer ",""), process.env.JWTPASSWORD).username;
-    const user = await User.findOne({where: {username: username}});
+    const userID = jwt.verify(req.header("Authorization").replace("Bearer ",""), process.env.JWTPASSWORD).id;
+    const user = await User.findOne({where: {id: userID}});
     if (!user){
       throw new Error ("User not found");
     } else {

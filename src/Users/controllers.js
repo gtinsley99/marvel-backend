@@ -9,7 +9,7 @@ const registerUser = async (req, res) => {
       password: req.body.password,
     });
     const token = jwt.sign(
-      { username: req.body.username },
+      { id: user.id },
       process.env.JWTPASSWORD,
       { expiresIn: "7d" }
     );
@@ -46,7 +46,7 @@ const loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
     const token = jwt.sign(
-      { username: req.body.username },
+      { id: user.id },
       process.env.JWTPASSWORD,
       { expiresIn: "7d" }
     );
@@ -171,6 +171,56 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const updateUsername = async (req, res) => {
+  try {
+    const userDetails = await User.findOne({
+      where: { username: req.user.username },
+    });
+    if (userDetails.username === req.body.newusername){
+      throw new Error("Same as current username");
+    };
+    await userDetails.update({
+      username: req.body.newusername,
+    });
+    await userDetails.save();
+    res.status(200).json({
+      message: "Username updated",
+      username: userDetails.username,
+    });
+  } catch (error) {
+    console.log(error);
+    if (error.errors) {
+      if (error.errors[0].message === "username must be unique") {
+        res.status(400).json({
+          message: "Username taken",
+        });
+        return;
+      } 
+    }
+    res.status(501).json({
+      message: error.message,
+      detail: error,
+    });
+  }
+};
+
+const findUser = async (req, res) => {
+  try {
+    const user = await User.findOne({where: {username: req.params["username"]}});
+    res.status(200).json({
+      message: "User found",
+      username: user.username,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(501).json({
+      message: "User not found",
+      error: error,
+    });
+  }
+};
+
+
 module.exports = {
   registerUser,
   loginUser,
@@ -178,4 +228,6 @@ module.exports = {
   updateEmail,
   updatePassword,
   deleteUser,
+  updateUsername,
+  findUser
 };

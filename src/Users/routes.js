@@ -1,7 +1,22 @@
 const { Router } = require("express");
 const userRouter = Router();
-const {registerUser, loginUser, loginWithToken, updateEmail, updatePassword, deleteUser, updateUsername, findUser} = require("./controllers");
-const {hashPassword, passwordCheck, tokenCheck} = require("../middleware/index");
+const {
+  registerUser,
+  loginUser,
+  loginWithToken,
+  updateEmail,
+  updatePassword,
+  deleteUser,
+  updateUsername,
+  findUser,
+  addFavourite,
+  deleteFav,
+} = require("./controllers");
+const {
+  hashPassword,
+  passwordCheck,
+  tokenCheck,
+} = require("../middleware/index");
 
 // Route to add a user, password hashed before add to db
 userRouter.post("/register", hashPassword, registerUser);
@@ -27,5 +42,9 @@ userRouter.delete("/deleteuser", passwordCheck, deleteUser);
 // Route to find user by username
 userRouter.get("/finduser/:username", tokenCheck, findUser);
 
-module.exports = userRouter;
+// Route to add favourite character for user
+userRouter.put("/addfavourite", tokenCheck, addFavourite);
 
+userRouter.put("/deletecharacter", tokenCheck, deleteFav);
+
+module.exports = userRouter;

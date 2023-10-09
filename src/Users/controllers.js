@@ -204,6 +204,22 @@ const updateUsername = async (req, res) => {
   }
 };
 
+const findUser = async (req, res) => {
+  try {
+    const user = await User.findOne({where: {username: req.params["username"]}});
+    res.status(200).json({
+      message: "User found",
+      username: user.username,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(501).json({
+      message: "User not found",
+      error: error,
+    });
+  }
+};
+
 
 module.exports = {
   registerUser,
@@ -212,5 +228,6 @@ module.exports = {
   updateEmail,
   updatePassword,
   deleteUser,
-  updateUsername
+  updateUsername,
+  findUser
 };

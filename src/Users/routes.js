@@ -11,6 +11,7 @@ const {
   findUser,
   addFavourite,
   deleteFav,
+  popular
 } = require("./controllers");
 const {
   hashPassword,
@@ -45,6 +46,10 @@ userRouter.get("/finduser/:username", tokenCheck, findUser);
 // Route to add favourite character for user
 userRouter.put("/addfavourite", tokenCheck, addFavourite);
 
+// Route to delete character from favourites
 userRouter.put("/deletecharacter", tokenCheck, deleteFav);
+
+// Route to see top 5 popular characters
+userRouter.get("/popular", popular);
 
 module.exports = userRouter;

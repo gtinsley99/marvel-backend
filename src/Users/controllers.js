@@ -1,4 +1,5 @@
 const User = require("../Users/model");
+const Character = require("../Characters/model");
 const jwt = require("jsonwebtoken");
 
 const registerUser = async (req, res) => {
@@ -232,10 +233,14 @@ const addFavourite = async (req, res) => {
         favourite: `${user.favourite},${req.body.name}`,
       });
     }
-    // await addFavourite.save();
+    const character = await Character.findOne({where: {name: req.body.name}});
+    await character.update({
+      count: character.count + 1
+    });
     res.status(200).json({
       message: "Success",
       favourite: user.favourite,
+      count: character.count
     });
   } catch (error) {
     console.log(error);
@@ -260,10 +265,14 @@ const deleteFav = async (req, res) => {
       favourite: favs.join(",")
     })
     await user.save();
+    const character = await Character.findOne({where: {name: req.body.name}});
+    await character.update({
+      count: character.count - 1
+    });
     res.status(200).json({
       message: "success",
       favourite: user.favourite,
-      favIndex: favRemoveIndex
+      count: character.count
     });
   } catch (error) {
     console.log(error);
@@ -273,6 +282,28 @@ const deleteFav = async (req, res) => {
     });
   }
 };
+
+const popular = async (req, res) => {
+  try {
+    let arr = [];
+    let char = await Character.findAll({});
+    char.forEach((element) => arr.push(element.count))
+    arr.sort((a, b) => (b - a));
+    let popArr = [];
+    for (let i = 0; i < 5; i++){
+      popArr.push(await Character.findOne({where: {count: arr[i]}}));
+    }
+    res.status(200).json({
+      characters: popArr.map((char) => char.name)
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(501).json({
+      message: error.message,
+      detail: error,
+    });
+  }
+}
 
 module.exports = {
   registerUser,
@@ -285,4 +316,5 @@ module.exports = {
   findUser,
   addFavourite,
   deleteFav,
+  popular,
 };

@@ -29,8 +29,8 @@ const syncTables = () => {
     Character.sync();
 };
 
-app.use("/users", userRouter);
-app.use("/characters", charRouter);
+app.use(userRouter);
+app.use(charRouter);
 
 //health check for your API and see if server is working
 app.get("/health", (req, res) => {

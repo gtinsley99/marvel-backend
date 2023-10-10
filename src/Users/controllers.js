@@ -1,4 +1,5 @@
 const User = require("../Users/model");
+const User_Characters = require("../models/User_Characters");
 const Character = require("../Characters/model");
 const jwt = require("jsonwebtoken");
 
@@ -223,33 +224,58 @@ const findUser = async (req, res) => {
 
 const addFavourite = async (req, res) => {
   try {
-    const user = await User.findOne({ where: { username: req.user.username } });
-    if (user.favourite === null || user.favourite.length === 0) {
-      await user.update({
-        favourite: req.body.name,
-      });
-    } else {
-      await user.update({
-        favourite: `${user.favourite},${req.body.name}`,
-      });
-    }
+    const user = await User.findOne({where: {username: req.user.username}});
     const character = await Character.findOne({where: {name: req.body.name}});
-    await character.update({
-      count: character.count + 1
-    });
-    res.status(200).json({
-      message: "Success",
-      favourite: user.favourite,
-      count: character.count
+    if (user && character){
+      await User_Characters.create({
+        UserId: user.id,
+        CharacterId: character.id
+      })
+    };
+    res.status(201).json({
+      username: user.username,
+      character: character.name
     });
   } catch (error) {
-    console.log(error);
+      console.log(error);
     res.status(501).json({
       message: error.message,
       detail: error,
     });
   }
-};
+}
+
+// const addFavourite = async (req, res) => {
+//   try {
+//     const user = await User.findOne({ where: { username: req.user.username } });
+//     console.log(user);
+//     if (user.favourite === null || user.favourite.length === 0) {
+//       await user.update({
+//         favourite: req.body.name,
+//       });
+//     } else {
+//       await user.update({
+//         favourite: `${user.favourite},${req.body.name}`,
+//       });
+//     }
+//     const character = await Character.findOne({where: {name: req.body.name}});
+//     console.log(character);
+//     await character.update({
+//       count: character.count + 1
+//     });
+//     res.status(200).json({
+//       message: "Success",
+//       favourite: user.favourite,
+//       count: character.count
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(501).json({
+//       message: error.message,
+//       detail: error,
+//     });
+//   }
+// };
 
 const deleteFav = async (req, res) => {
   try {

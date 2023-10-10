@@ -21,7 +21,7 @@ const User = connection.define("User", {
     },
     favourite: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: true,
     },
 });
 

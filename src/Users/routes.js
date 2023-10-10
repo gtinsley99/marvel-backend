@@ -44,12 +44,12 @@ userRouter.delete("/deleteuser", passwordCheck, deleteUser);
 userRouter.get("/finduser/:username", tokenCheck, findUser);
 
 // Route to add favourite character for user
-userRouter.put("/addfavourite", tokenCheck, addFavourite);
+userRouter.post("/addfavourite", tokenCheck, addFavourite);
 
 // Route to delete character from favourites
-userRouter.put("/deletecharacter", tokenCheck, deleteFav);
+userRouter.delete("/deletecharacter", tokenCheck, deleteFav);
 
-// Route to see top 5 popular characters
+// Route to see top 3 popular characters
 userRouter.get("/popular", popular);
 
 module.exports = userRouter;

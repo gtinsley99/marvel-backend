@@ -26,7 +26,7 @@ app.use(cors());
 
 const syncTables = () => {
     User.sync();
-    Character.sync({alter: true});
+    Character.sync();
 };
 
 app.use("/users", userRouter);

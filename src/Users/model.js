@@ -18,11 +18,7 @@ const User = connection.define("User", {
     password: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    favourite: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
+    }
 });
 
 module.exports = User;

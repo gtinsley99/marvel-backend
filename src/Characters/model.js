@@ -6,11 +6,6 @@ const Character = connection.define("Character", {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
-    },
-    count: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
     }
 });
 

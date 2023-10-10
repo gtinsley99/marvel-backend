@@ -2,6 +2,13 @@ const User = require("../Users/model");
 const User_Characters = require("../models/User_Characters");
 const Character = require("../Characters/model");
 const jwt = require("jsonwebtoken");
+const {Sequelize} = require("sequelize");
+const sequelize = new Sequelize(process.env.DB_NAME,
+process.env.DB_USERNAME, process.env.DB_PASSWORD,{
+  host: process.env.DB_HOSTNAME,
+  dialect: "mysql"
+}
+);
 
 const registerUser = async (req, res) => {
   try {
@@ -231,13 +238,20 @@ const addFavourite = async (req, res) => {
         UserId: user.id,
         CharacterId: character.id
       })
-    };
+    } else{
+      throw new Error("User or character not found");
+    }
     res.status(201).json({
       username: user.username,
       character: character.name
     });
   } catch (error) {
       console.log(error);
+      if (error.errors[0].message === "PRIMARY must be unique"){
+        res.status(501).json({
+          message: "Character already favourited",
+        })
+      }
     res.status(501).json({
       message: error.message,
       detail: error,
@@ -245,60 +259,23 @@ const addFavourite = async (req, res) => {
   }
 }
 
-// const addFavourite = async (req, res) => {
-//   try {
-//     const user = await User.findOne({ where: { username: req.user.username } });
-//     console.log(user);
-//     if (user.favourite === null || user.favourite.length === 0) {
-//       await user.update({
-//         favourite: req.body.name,
-//       });
-//     } else {
-//       await user.update({
-//         favourite: `${user.favourite},${req.body.name}`,
-//       });
-//     }
-//     const character = await Character.findOne({where: {name: req.body.name}});
-//     console.log(character);
-//     await character.update({
-//       count: character.count + 1
-//     });
-//     res.status(200).json({
-//       message: "Success",
-//       favourite: user.favourite,
-//       count: character.count
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(501).json({
-//       message: error.message,
-//       detail: error,
-//     });
-//   }
-// };
-
 const deleteFav = async (req, res) => {
   try {
-    const user = await User.findOne({ where: { username: req.user.username } });
-    let favs = user.favourite;
-    favs = favs.split(",");
-    favRemoveIndex = favs.findIndex((name) => name === req.body.name);
-    if (favRemoveIndex === -1){
-      throw new Error("Not in favourites");
-    };
-    favs.splice(favRemoveIndex, 1);
-    await user.update({
-      favourite: favs.join(",")
-    })
-    await user.save();
+    const user = await User.findOne({where: {username: req.user.username}});
     const character = await Character.findOne({where: {name: req.body.name}});
-    await character.update({
-      count: character.count - 1
-    });
+    const userChar = await User_Characters.findOne({where:{
+      UserId: user.id,
+      CharacterId: character.id
+    }})
+    if (userChar){
+      await userChar.destroy();
+    } else{
+      throw new Error("Character not favourited");
+    };
+   
     res.status(200).json({
-      message: "success",
-      favourite: user.favourite,
-      count: character.count
+      username: user.username,
+      character: character.name
     });
   } catch (error) {
     console.log(error);
@@ -310,26 +287,30 @@ const deleteFav = async (req, res) => {
 };
 
 const popular = async (req, res) => {
-  try {
-    let arr = [];
-    let char = await Character.findAll({});
-    char.forEach((element) => arr.push(element.count))
-    arr.sort((a, b) => (b - a));
-    let popArr = [];
-    for (let i = 0; i < 5; i++){
-      popArr.push(await Character.findOne({where: {count: arr[i]}}));
-    }
-    res.status(200).json({
-      characters: popArr.map((char) => char.name)
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(501).json({
-      message: error.message,
-      detail: error,
-    });
+ try {
+  let pop = await sequelize.query("SELECT `CharacterId` FROM `User_Characters` GROUP BY `CharacterId` ORDER BY COUNT(*) DESC LIMIT 3");
+  pop = pop[0];
+  let char = [];
+  for (let i=0; i<pop.length; i++){
+    char.push(Object.values(pop[i]));
+  };
+  let allName = [];
+  for (let i=0; i<char.length; i++){
+  let names = await Character.findOne({where: {id: char[i]}});
+  allName.push(names.name);
   }
-}
+  res.status(200).json({
+    message: "Favourites characters",
+    characters: allName
+  })
+ } catch (error) {
+  console.log(error);
+  res.status(501).json({
+    message: error.message,
+    detail: error,
+  });
+ };
+};
 
 module.exports = {
   registerUser,

@@ -4,13 +4,9 @@ const connection = require("../db/connection");
 const Character = connection.define("Character", {
     name: {
         type: DataTypes.STRING,
-        unique: true,
-        allowNull: false
-    },
-    image: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
+        allowNull: false,
+        unique: true
+    }
 });
 
 module.exports = Character;

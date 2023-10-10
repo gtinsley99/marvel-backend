@@ -1,12 +1,9 @@
-// import express and use router methods
 const { Router } = require("express");
 const charRouter = Router();
 
-//import controllers for characters
-const {addCharacter, delCharacter} = require("./controllers");
+const {addCharacter} = require("./controllers");
 
-//route to add character to db
-charRouter.post("/addCharacter", addCharacter);
+// Route to add character
+charRouter.post("/add", addCharacter);
 
-//route to delete character from db
-charRouter.delete("/delCharacter", delCharacter);
+module.exports = charRouter;

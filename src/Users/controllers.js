@@ -1,5 +1,14 @@
 const User = require("../Users/model");
+const User_Characters = require("../models/User_Characters");
+const Character = require("../Characters/model");
 const jwt = require("jsonwebtoken");
+const {Sequelize} = require("sequelize");
+const sequelize = new Sequelize(process.env.DB_NAME,
+process.env.DB_USERNAME, process.env.DB_PASSWORD,{
+  host: process.env.DB_HOSTNAME,
+  dialect: "mysql"
+}
+);
 
 const registerUser = async (req, res) => {
   try {
@@ -8,11 +17,9 @@ const registerUser = async (req, res) => {
       email: req.body.email,
       password: req.body.password,
     });
-    const token = jwt.sign(
-      { id: user.id },
-      process.env.JWTPASSWORD,
-      { expiresIn: "7d" }
-    );
+    const token = jwt.sign({ id: user.id }, process.env.JWTPASSWORD, {
+      expiresIn: "7d",
+    });
     console.log(token);
     res.status(201).json({
       message: "User registered",
@@ -45,17 +52,16 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
-    const token = jwt.sign(
-      { id: user.id },
-      process.env.JWTPASSWORD,
-      { expiresIn: "7d" }
-    );
+    const token = jwt.sign({ id: user.id }, process.env.JWTPASSWORD, {
+      expiresIn: "7d",
+    });
     console.log(token);
     res.status(201).json({
       message: "User logged in",
       user: {
         username: user.username,
         email: user.email,
+        favourite: user.favourite,
         token: token,
       },
     });
@@ -78,6 +84,7 @@ const loginWithToken = async (req, res) => {
       user: {
         username: userDetails.username,
         email: userDetails.email,
+        favourite: userDetails.favourite
       },
     });
   } catch (error) {
@@ -176,9 +183,9 @@ const updateUsername = async (req, res) => {
     const userDetails = await User.findOne({
       where: { username: req.user.username },
     });
-    if (userDetails.username === req.body.newusername){
+    if (userDetails.username === req.body.newusername) {
       throw new Error("Same as current username");
-    };
+    }
     await userDetails.update({
       username: req.body.newusername,
     });
@@ -195,7 +202,7 @@ const updateUsername = async (req, res) => {
           message: "Username taken",
         });
         return;
-      } 
+      }
     }
     res.status(501).json({
       message: error.message,
@@ -206,7 +213,9 @@ const updateUsername = async (req, res) => {
 
 const findUser = async (req, res) => {
   try {
-    const user = await User.findOne({where: {username: req.params["username"]}});
+    const user = await User.findOne({
+      where: { username: req.params["username"] },
+    });
     res.status(200).json({
       message: "User found",
       username: user.username,
@@ -220,6 +229,88 @@ const findUser = async (req, res) => {
   }
 };
 
+const addFavourite = async (req, res) => {
+  try {
+    const user = await User.findOne({where: {username: req.user.username}});
+    const character = await Character.findOne({where: {name: req.body.name}});
+    if (user && character){
+      await User_Characters.create({
+        UserId: user.id,
+        CharacterId: character.id
+      })
+    } else{
+      throw new Error("User or character not found");
+    }
+    res.status(201).json({
+      username: user.username,
+      character: character.name
+    });
+  } catch (error) {
+      console.log(error);
+      if (error.errors[0].message === "PRIMARY must be unique"){
+        res.status(501).json({
+          message: "Character already favourited",
+        })
+      }
+    res.status(501).json({
+      message: error.message,
+      detail: error,
+    });
+  }
+}
+
+const deleteFav = async (req, res) => {
+  try {
+    const user = await User.findOne({where: {username: req.user.username}});
+    const character = await Character.findOne({where: {name: req.body.name}});
+    const userChar = await User_Characters.findOne({where:{
+      UserId: user.id,
+      CharacterId: character.id
+    }})
+    if (userChar){
+      await userChar.destroy();
+    } else{
+      throw new Error("Character not favourited");
+    };
+   
+    res.status(200).json({
+      username: user.username,
+      character: character.name
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(501).json({
+      message: error.message,
+      detail: error,
+    });
+  }
+};
+
+const popular = async (req, res) => {
+ try {
+  let pop = await sequelize.query("SELECT `CharacterId` FROM `User_Characters` GROUP BY `CharacterId` ORDER BY COUNT(*) DESC LIMIT 3");
+  pop = pop[0];
+  let char = [];
+  for (let i=0; i<pop.length; i++){
+    char.push(Object.values(pop[i]));
+  };
+  let allName = [];
+  for (let i=0; i<char.length; i++){
+  let names = await Character.findOne({where: {id: char[i]}});
+  allName.push(names.name);
+  }
+  res.status(200).json({
+    message: "Favourites characters",
+    characters: allName
+  })
+ } catch (error) {
+  console.log(error);
+  res.status(501).json({
+    message: error.message,
+    detail: error,
+  });
+ };
+};
 
 module.exports = {
   registerUser,
@@ -229,5 +320,8 @@ module.exports = {
   updatePassword,
   deleteUser,
   updateUsername,
-  findUser
+  findUser,
+  addFavourite,
+  deleteFav,
+  popular,
 };

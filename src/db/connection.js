@@ -1,5 +1,5 @@
 //import sequelize library from the sequelize dependencies downloaded
-const { Sequelize } = require("sequelize");
+const { Sequelize} = require("sequelize");
 
 require("dotenv").config();
 

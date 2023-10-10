@@ -10,9 +10,12 @@ const app = express();
 
 // Models
 const User = require("./Users/model");
+const Character = require("./Characters/model");
 
 // Routes
 const userRouter = require("./Users/routes");
+const charRouter = require("./Characters/routes");
+
 
 // specify port the server will listen on
 const port = process.env.PORT || 5001; //if the server can't load on 5002 it will load on 5001.
@@ -23,9 +26,11 @@ app.use(cors());
 
 const syncTables = () => {
     User.sync();
+    Character.sync();
 };
 
 app.use("/users", userRouter);
+app.use("/characters", charRouter);
 
 //health check for your API and see if server is working
 app.get("/health", (req, res) => {

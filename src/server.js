@@ -11,10 +11,12 @@ const app = express();
 // Models
 const User = require("./Users/model");
 const Character = require("./Characters/model");
+const User_Characters = require("./models/User_Characters");
 
 // Routes
 const userRouter = require("./Users/routes");
 const charRouter = require("./Characters/routes");
+
 
 
 // specify port the server will listen on
@@ -27,6 +29,7 @@ app.use(cors());
 const syncTables = () => {
     User.sync();
     Character.sync();
+    User_Characters.sync();
 };
 
 app.use(userRouter);

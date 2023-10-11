@@ -4,11 +4,16 @@ const addCharacter = async (req, res) => {
     try {
         const char = await Character.create({
             name: req.body.name,
-            count: 0
+            image: req.body.image,
+            description: req.body.description,
+            marvelID: req.body.marvelID,
         })
         res.status(200).json({
             message: "success",
-            name: char.name
+            name: char.name,
+            image: char.image,
+            description: char.description,
+            marvelID: char.marvelID
         });
     } catch (error) {
         console.log(error);

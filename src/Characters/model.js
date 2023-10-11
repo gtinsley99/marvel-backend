@@ -6,7 +6,17 @@ const Character = connection.define("Character", {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
+    },
+    image: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    marvelID: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true   
     }
+
 });
 
 module.exports = Character;

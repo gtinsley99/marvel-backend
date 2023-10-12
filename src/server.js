@@ -11,7 +11,7 @@ const app = express();
 // Models
 const User = require("./Users/model");
 const Character = require("./Characters/model");
-const User_Characters = require("./models/User_Characters");
+const User_Characters = require("./User_Characters/model");
 
 // Routes
 const userRouter = require("./Users/routes");

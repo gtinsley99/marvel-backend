@@ -1,5 +1,5 @@
 const User = require("../Users/model");
-const User_Characters = require("../models/User_Characters");
+const User_Characters = require("../User_Characters/model");
 const Character = require("../Characters/model");
 const jwt = require("jsonwebtoken");
 const {Sequelize} = require("sequelize");

@@ -107,7 +107,7 @@ const updateEmail = async (req, res) => {
       where: { username: req.user.username },
     });
     if (userDetails.email === req.body.newemail) {
-      throw new Error("Email address must be different from current email");
+      throw new Error(res.status(400).json({message: "Email address must be different from current email"}));
     }
     await userDetails.update({
       email: req.body.newemail,
@@ -165,8 +165,10 @@ const updatePassword = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
-    if (!user) {
-      throw new Error("Username or password incorrect");
+    if (!user || req.user.username !== req.body.username) {
+      throw new Error(res.status(501).json({
+        message: "The input username was different to account username"
+      }));
     } else {
       await User_Characters.destroy({where: {UserId: user.id}});
       await user.destroy();
@@ -190,7 +192,7 @@ const updateUsername = async (req, res) => {
       where: { username: req.user.username },
     });
     if (userDetails.username === req.body.newusername) {
-      throw new Error("Same as current username");
+      throw new Error(res.status(400).json({message: "Same as current username"}));
     }
     await userDetails.update({
       username: req.body.newusername,
@@ -245,7 +247,7 @@ const addFavourite = async (req, res) => {
         CharacterId: character.id
       })
     } else{
-      throw new Error("User or character not found");
+      throw new Error(res.status(501).json({message: "User or character not found"}));
     }
     res.status(201).json({
       username: user.username,
@@ -276,7 +278,7 @@ const deleteFav = async (req, res) => {
     if (userChar){
       await userChar.destroy();
     } else{
-      throw new Error("Character not favourited");
+      throw new Error(res.status(400).json({message: "Character not favourited"}));
     };
    
     res.status(200).json({

@@ -40,7 +40,7 @@ userRouter.put("/updatepassword", passwordCheck, hashPassword, updatePassword);
 userRouter.put("/updateusername", tokenCheck, updateUsername);
 
 // Route to delete user with password check
-userRouter.delete("/deleteuser", passwordCheck, deleteUser);
+userRouter.delete("/deleteuser", tokenCheck, passwordCheck,  deleteUser);
 
 // Route to find user by username
 userRouter.get("/finduser/:username", tokenCheck, findUser);

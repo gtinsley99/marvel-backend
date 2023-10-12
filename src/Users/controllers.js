@@ -1,5 +1,5 @@
 const User = require("../Users/model");
-const User_Characters = require("../models/User_Characters");
+const User_Characters = require("../User_Characters/model");
 const Character = require("../Characters/model");
 const jwt = require("jsonwebtoken");
 const {Sequelize} = require("sequelize");
@@ -296,8 +296,8 @@ const popular = async (req, res) => {
   };
   let allName = [];
   for (let i=0; i<char.length; i++){
-  let names = await Character.findOne({where: {id: char[i]}});
-  allName.push(names.name);
+  let names = await Character.findOne({where: {id: char[i]}, attributes: ["name", "image"]});
+  allName.push(names);
   }
   res.status(200).json({
     message: "Favourites characters",

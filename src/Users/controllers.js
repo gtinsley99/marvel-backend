@@ -312,6 +312,32 @@ const popular = async (req, res) => {
  };
 };
 
+const isFav = async (req, res) => {
+  try {
+    const char = await Character.findOne({where: {name: req.params.name}});
+    const fav = await User_Characters.findOne({where: {UserId: req.user.id, CharacterId: char.id}});
+    if (fav){
+      res.status(200).json({
+        message: "Is a favourite",
+        character: char.name
+      })
+    } else{
+      res.status(200).json({
+        message: "Is not a favourite",
+        character: char.name
+      })
+    }
+ 
+  } catch (error) {
+   console.log(error);
+   res.status(501).json({
+     message: error.message,
+     detail: error,
+   });
+  };
+ };
+ 
+
 module.exports = {
   registerUser,
   loginUser,
@@ -324,4 +350,5 @@ module.exports = {
   addFavourite,
   deleteFav,
   popular,
+  isFav
 };

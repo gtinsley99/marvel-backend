@@ -166,7 +166,7 @@ const deleteUser = async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
     if (!user || req.user.username !== req.body.username) {
-      throw new Error(res.status(501).json({
+      throw new Error(res.status(400).json({
         message: "The input username was different to account username"
       }));
     } else {

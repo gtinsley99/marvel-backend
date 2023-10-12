@@ -41,6 +41,11 @@ const registerUser = async (req, res) => {
         message: "Invalid email address",
       });
       return;
+    } else if (error.errors[0].message === "email must be unique"){
+      res.status(400).json({
+        message: "Email address taken",
+      });
+      return;
     }
     res.status(501).json({
       message: error.message,

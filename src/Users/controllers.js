@@ -296,8 +296,8 @@ const popular = async (req, res) => {
   };
   let allName = [];
   for (let i=0; i<char.length; i++){
-  let names = await Character.findOne({where: {id: char[i]}});
-  allName.push(names.name);
+  let names = await Character.findOne({where: {id: char[i]}, attributes: ["name", "image"]});
+  allName.push(names);
   }
   res.status(200).json({
     message: "Favourites characters",

@@ -168,6 +168,7 @@ const deleteUser = async (req, res) => {
     if (!user) {
       throw new Error("Username or password incorrect");
     } else {
+      await User_Characters.destroy({where: {UserId: user.id}});
       await user.destroy();
       res.status(200).json({
         message: "User deleted",

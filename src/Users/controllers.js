@@ -336,6 +336,34 @@ const isFav = async (req, res) => {
    });
   };
  };
+
+ const getFavs = async (req, res) => {
+  try {
+    const fav = await User_Characters.findAll({where: {UserId: req.user.id}});
+    if (!fav){
+      res.status(200).json({
+        message: "No favourites",
+        user: req.user.username
+      })
+    } 
+      let charArr = [];
+      for (let i = 0; i<fav.length; i++){
+      let char = await Character.findOne({where: {id: fav[i].CharacterId}, attributes: ["name", "image"]});
+      charArr.push(char);
+    }
+    console.log(fav);
+      res.status(200).json({
+        message: "All favourite",
+        favourites: charArr
+      })
+  } catch (error) {
+   console.log(error);
+   res.status(501).json({
+     message: error.message,
+     detail: error,
+   });
+  };
+ };
  
 
 module.exports = {
@@ -350,5 +378,6 @@ module.exports = {
   addFavourite,
   deleteFav,
   popular,
-  isFav
+  isFav,
+  getFavs,
 };

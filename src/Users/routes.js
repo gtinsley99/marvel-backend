@@ -12,7 +12,8 @@ const {
   addFavourite,
   deleteFav,
   popular,
-  isFav
+  isFav,
+  getFavs,
 } = require("./controllers");
 const {
   hashPassword,
@@ -55,5 +56,8 @@ userRouter.get("/popular", popular);
 
 // Route to check if user has favourited
 userRouter.get("/isfavourite/:name", tokenCheck, isFav);
+
+// Route to get favourites of user
+userRouter.get("/favourites", tokenCheck, getFavs);
 
 module.exports = userRouter;

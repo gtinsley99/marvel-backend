@@ -167,7 +167,7 @@ const deleteUser = async (req, res) => {
     const user = await User.findOne({ where: { username: req.body.username } });
     if (!user || req.user.username !== req.body.username) {
       throw new Error(res.status(400).json({
-        message: "The input username was different to account username"
+        message: "Username or password incorrect"
       }));
     } else {
       await User_Characters.destroy({where: {UserId: user.id}});

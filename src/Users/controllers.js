@@ -66,7 +66,7 @@ const loginUser = async (req, res) => {
       user: {
         username: user.username,
         email: user.email,
-        favourite: user.favourite,
+        profilePic: user.profilePic,
         token: token,
       },
     });
@@ -89,7 +89,7 @@ const loginWithToken = async (req, res) => {
       user: {
         username: userDetails.username,
         email: userDetails.email,
-        favourite: userDetails.favourite
+        profilePic: userDetails.profilePic
       },
     });
   } catch (error) {

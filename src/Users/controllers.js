@@ -372,6 +372,26 @@ const isFav = async (req, res) => {
    });
   };
  };
+
+ const updatePic = async (req, res) => {
+  try {
+    const userDetails = await User.findOne({where: {username: req.user.username}});
+    await userDetails.update({
+      profilePic: req.body.newprofilepic,
+    });
+    await userDetails.save();
+    res.status(200).json({
+      message: "Profile picture updated",
+      profilePic: userDetails.profilePic,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(501).json({
+      message: error.message,
+      detail: error,
+    });
+  };
+ };
  
 
 module.exports = {
@@ -388,4 +408,5 @@ module.exports = {
   popular,
   isFav,
   getFavs,
+  updatePic
 };

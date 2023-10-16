@@ -14,6 +14,7 @@ const {
   popular,
   isFav,
   getFavs,
+  updatePic
 } = require("./controllers");
 const {
   hashPassword,
@@ -59,5 +60,8 @@ userRouter.get("/isfavourite/:name", tokenCheck, isFav);
 
 // Route to get favourites of user
 userRouter.get("/favourites", tokenCheck, getFavs);
+
+// Route to update profile picture
+userRouter.put("/updatepic", tokenCheck, updatePic);
 
 module.exports = userRouter;

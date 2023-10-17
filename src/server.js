@@ -29,7 +29,7 @@ const { tokenCheck } = require("./middleware");
 const port = process.env.PORT || 5001; //if the server can't load on 5002 it will load on 5001.
 
 //app.use() is for middleware
-app.use(express.json({limit: "300kb"}));
+app.use(express.json({limit: "1000kb"}));
 app.use(cors());
 app.use(fileupload());
 app.use(bodyParser.urlencoded({extended: false}));

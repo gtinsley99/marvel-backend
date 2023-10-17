@@ -20,7 +20,7 @@ const User = connection.define("User", {
         allowNull: false
     },
     profilePic: {
-        type: DataTypes.STRING,
+        type: DataTypes.BLOB,
         allowNull: true,
     }
 });

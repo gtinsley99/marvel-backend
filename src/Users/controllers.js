@@ -10,6 +10,7 @@ process.env.DB_USERNAME, process.env.DB_PASSWORD,{
 }
 );
 
+
 const registerUser = async (req, res) => {
   try {
     const user = await User.create({
@@ -376,14 +377,14 @@ const isFav = async (req, res) => {
  const updatePic = async (req, res) => {
   try {
     const userDetails = await User.findOne({where: {username: req.user.username}});
-    console.log(req.body.formdata);
     await userDetails.update({
-      profilePic: req.body.formdata.pic,
+      profilePic: req.files.blob.data,
     });
     await userDetails.save();
+    console.log(userDetails.profilePic);
     res.status(200).json({
-      message: "Profile picture updated",
-      profilePic: userDetails.profilePic,
+      message: "Profile pic updated",
+      profilePic: userDetails.profilePic
     });
   } catch (error) {
     console.log(error);

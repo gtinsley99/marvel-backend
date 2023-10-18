@@ -17,8 +17,6 @@ const User_Characters = require("./User_Characters/model");
 // Routes
 const userRouter = require("./Users/routes");
 const charRouter = require("./Characters/routes");
-const { updatePic } = require("./Users/controllers");
-const { tokenCheck } = require("./middleware");
 
 
 

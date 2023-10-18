@@ -377,10 +377,6 @@ const isFav = async (req, res) => {
  const updatePic = async (req, res) => {
   try {
     const userDetails = await User.findOne({where: {username: req.user.username}});
-    console.log(req.files);
-    console.log(typeof req.files.blob);
-    console.log(req.files instanceof Blob);
-    console.log(req.files.blob instanceof Blob);
     await userDetails.update({
       profilePic: req.files.blob.data,
     });

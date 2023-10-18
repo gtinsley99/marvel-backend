@@ -9,8 +9,7 @@ process.env.DB_USERNAME, process.env.DB_PASSWORD,{
   dialect: "mysql"
 }
 );
-const multer = require("multer");
-const upload = multer({dest: "upload/"});
+
 
 const registerUser = async (req, res) => {
   try {
@@ -379,12 +378,14 @@ const isFav = async (req, res) => {
   try {
     const userDetails = await User.findOne({where: {username: req.user.username}});
     console.log(req.files);
-    console.log(req.files.blob);
     console.log(typeof req.files.blob);
+    console.log(req.files instanceof Blob);
+    console.log(req.files.blob instanceof Blob);
     await userDetails.update({
-      profilePic: req.files.blob,
+      profilePic: req.files.blob.data,
     });
     await userDetails.save();
+    console.log(userDetails.profilePic);
     res.status(200).json({
       message: "Profile pic updated",
       profilePic: userDetails.profilePic
